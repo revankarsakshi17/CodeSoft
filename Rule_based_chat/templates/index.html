@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ChatBot</title>
+    <style>
+        body { font-family: Arial; background: #f2f2f2; }
+        #chatbox { width: 400px; height: 400px; margin: 50px auto; background: white; padding: 10px; border-radius: 10px; overflow-y: auto; }
+        input { width: 300px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; }
+        button { padding: 10px; border: none; background: #4CAF50; color: white; border-radius: 5px; }
+
+        body h1{
+                font-family: 'Poppins', sans-serif;
+                font-size: 48px;
+                text-align: center;
+                font-weight: 700;
+                letter-spacing: 2px;
+                background: linear-gradient(90deg, #7c5cff, #42d392);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-transform: uppercase;
+                margin: 40px 0;
+                animation: glow 2.5s ease-in-out infinite alternate;
+            
+
+                /* Subtle glowing animation */
+                @keyframes glow {
+                from {
+                    text-shadow: 0 0 10px rgba(124, 92, 255, 0.5),
+                                0 0 20px rgba(66, 211, 146, 0.4);
+                }
+                to {
+                    text-shadow: 0 0 20px rgba(124, 92, 255, 0.9),
+                                0 0 40px rgba(66, 211, 146, 0.8);
+                }
+                }
+
+        }
+    </style>
+</head>
+<body>
+    <h1>RULE-BASED-CHATBOT</h1>
+    <div id="chatbox"></div>
+    <div style="text-align:center;">
+        <input id="userInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userText = document.getElementById("userInput").value;
+            document.getElementById("chatbox").innerHTML += "<p><b>You:</b> " + userText + "</p>";
+            document.getElementById("userInput").value = "";
+
+            const response = await fetch("/get", {
+                method: "POST",
+                headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                body: "msg=" + encodeURIComponent(userText)
+            });
+
+            const botReply = await response.text();
+            document.getElementById("chatbox").innerHTML += "<p><b>Bot:</b> " + botReply + "</p>";
+        }
+
+         // 👇 This part makes Enter key trigger sendMessage()
+        document.getElementById("userInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // prevent default form behavior
+                sendMessage(); // call the send function
+            }
+        });
+    </script>
+</body>
+</html>
