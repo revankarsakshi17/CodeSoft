@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tic Tac Toe </title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 40px;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 5px;
+      justify-content: center;
+      
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      font-size: 40px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f2f2f2;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    .cell:hover {
+      background:lightskyblue;
+    }
+
+    body h1,body label{
+      color:crimson;
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+
+    body h2{
+      color: darkblue;
+      font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+    button {
+      font-size: 20px;
+      background: lightgray;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Tic Tac Toe Game</h1>
+
+<label style="font-size: 20px;">Select Difficulty: </label>
+<select id="difficulty" style="font-size: 18px; margin-bottom: 15px;color:dodgerblue;" background="slateblue" color="white">
+  <option value="Easy">Easy</option>
+  <option value="Medium">Medium</option>
+  <option value="Hard">Hard</option>
+</select>
+
+<h2 id="message" >Your Turn (X)</h2>
+
+<div class="board" id="board">
+  <div class="cell" onclick="playerMove(0)"></div>
+  <div class="cell" onclick="playerMove(1)"></div>
+  <div class="cell" onclick="playerMove(2)"></div>
+  <div class="cell" onclick="playerMove(3)"></div>
+  <div class="cell" onclick="playerMove(4)"></div>
+  <div class="cell" onclick="playerMove(5)"></div>
+  <div class="cell" onclick="playerMove(6)"></div>
+  <div class="cell" onclick="playerMove(7)"></div>
+  <div class="cell" onclick="playerMove(8)"></div>
+</div>
+
+<button onclick="resetGame()" style="margin-top:20px; padding:10px 20px;color: indigo;">
+  Restart Game
+</button>
+
+<script>
+  let board = ["","","","","","","","",""];
+  let gameOver = false;
+
+  function playerMove(index) {
+    if (board[index] !== "" || gameOver) return;
+
+    board[index] = "X";
+    updateUI();
+
+    if (checkWinner("X")) return finish("You Win!");
+    if (isFull()) return finish("Draw!");
+
+    setTimeout(aiMove, 400);
+  }
+
+  function aiMove() {
+    if (gameOver) return;
+
+    const mode = document.getElementById("difficulty").value;
+
+    let move;
+    if (mode === "Easy") move = randomMove();
+    else if (mode === "Medium") move = mediumMove();
+    else move = bestMove(); // Hard mode (Minimax)
+
+    board[move] = "O";
+    updateUI();
+
+    if (checkWinner("O")) return finish("AI Wins!");
+    if (isFull()) return finish("Draw!");
+
+    document.getElementById("message").innerText = "Your Turn (X)";
+  }
+
+  /* -------------------- EASY MODE (RANDOM) -------------------- */
+  function randomMove() {
+    const empty = board.map((v,i) => v === "" ? i : null).filter(v => v != null);
+    return empty[Math.floor(Math.random() * empty.length)];
+  }
+
+  /* -------------------- MEDIUM MODE (BLOCK + RANDOM) -------------------- */
+  function mediumMove() {
+    // 40% random
+    if (Math.random() < 0.4) return randomMove();
+
+    // Try to block X
+    const lines = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+    for (let [a,b,c] of lines) {
+      if (board[a] === "X" && board[b] === "X" && board[c] === "") return c;
+      if (board[a] === "X" && board[c] === "X" && board[b] === "") return b;
+      if (board[b] === "X" && board[c] === "X" && board[a] === "") return a;
+    }
+
+    return randomMove();
+  }
+
+  /* -------------------- HARD MODE (UNBEATABLE MINIMAX) -------------------- */
+  function bestMove() {
+    let bestScore = -Infinity;
+    let move;
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === "") {
+        board[i] = "O";
+        let score = minimax(board, 0, false);
+        board[i] = "";
+        if (score > bestScore) {
+          bestScore = score;
+          move = i;
+        }
+      }
+    }
+    return move;
+  }
+
+  function minimax(b, depth, isMaximizing) {
+    if (checkWinner("O")) return 10 - depth;
+    if (checkWinner("X")) return depth - 10;
+    if (b.every(cell => cell !== "")) return 0;
+
+    if (isMaximizing) {
+      let best = -Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (b[i] === "") {
+          b[i] = "O";
+          best = Math.max(best, minimax(b, depth + 1, false));
+          b[i] = "";
+        }
+      }
+      return best;
+    } else {
+      let best = Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (b[i] === "") {
+          b[i] = "X";
+          best = Math.min(best, minimax(b, depth + 1, true));
+          b[i] = "";
+        }
+      }
+      return best;
+    }
+  }
+
+  /* -------------------- UTILITY FUNCTIONS -------------------- */
+  function updateUI() {
+    const cells = document.getElementsByClassName("cell");
+    for (let i = 0; i < 9; i++) cells[i].innerText = board[i];
+  }
+
+  function checkWinner(p) {
+    const wins = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+    return wins.some(([a,b,c]) => board[a] === p && board[b] === p && board[c] === p);
+  }
+
+  function isFull() {
+    return board.every(v => v !== "");
+  }
+
+  function finish(msg) {
+    document.getElementById("message").innerText = msg;
+    gameOver = true;
+  }
+
+  function resetGame() {
+    board = ["","","","","","","","",""];
+    gameOver = false;
+    updateUI();
+    document.getElementById("message").innerText = "Your Turn (X)";
+  }
+</script>
+
+</body>
+</html>
