@@ -1,0 +1,140 @@
+/* ===== Reset =====*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+/* ===== Body Design ===== */
+body {
+    background: linear-gradient(135deg, #1e1e2f, #2a2a40, #3b3b63);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+} 
+
+/* ===== Heading ===== */
+h1 {
+    font-size: 2.3rem;
+    margin-bottom: 25px;
+    text-align: center;
+    background: linear-gradient(90deg, #7c5cff, #42d392);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    letter-spacing: 1px;
+    animation: glow 2s alternate infinite;
+} 
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px rgba(124, 92, 255, 0.4),
+                    0 0 10px rgba(66, 211, 146, 0.4);
+    }
+    to {
+        text-shadow: 0 0 15px rgba(124, 92, 255, 1),
+                    0 0 30px rgba(66, 211, 146, 1);
+    }
+} 
+
+/* ===== Main Box ===== */
+ .box {
+    width: 420px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    text-align: center;
+} 
+
+/* ===== File Input ===== */
+input[type="file"] {
+    margin: 15px 0;
+    padding: 10px;
+    width: 100%;
+    border: 2px dashed #6f6fff;
+    color: #dcdcff;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+input[type="file"]:hover {
+    background: rgba(255, 255, 255, 0.08);
+} 
+
+/* ===== Button ===== */
+button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #6a5af9, #9d5cff);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(132, 73, 255, 0.6);
+} 
+
+/* RESULT BOX */
+#result {
+    margin-top: 25px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    background: #ffffff10;
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    color: white;
+    text-align: center;
+    border: 1px solid #ffffff30;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transition: 0.3s ease;
+    display: none; /* hidden until result appears */
+}
+
+/* When result is shown */
+#result.show {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+/* Mood Heading */
+#result h3 {
+    font-size: 26px;
+    margin-bottom: 10px;
+    color: #ffdf6c;
+    font-weight: 600;
+}
+
+/* Caption text */
+#result p {
+    margin-top: 0;
+    font-size: 18px;
+    color: #e6e6e6;
+    line-height: 1.4;
+}
+
+/* Emoji display (big and cute 😄) */
+.emoji {
+    font-size: 42px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
